@@ -43,8 +43,9 @@ export default {
             data: this.loginForm,
           }).then((res) => {
             if (res.data.meta.status !== 200) {
-              return alert("用户或密码错误");
+              return this.$message.error("用户或密码错误");
             } else {
+              this.$message.success("登录成功");
               window.sessionStorage.setItem("token", res.data.data.token);
               this.$router.push("/home");
             }
