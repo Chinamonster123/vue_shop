@@ -59,6 +59,7 @@
                 type="warning"
                 icon="el-icon-setting"
                 size="mini"
+                @click="setRole(bbb.row)"
               ></el-button
             ></el-tooltip>
             <el-tooltip
@@ -141,6 +142,39 @@
         <el-button type="primary" @click="editUser">确 定</el-button>
       </span>
     </el-dialog>
+    <!-- 分配角色对话框 -->
+    <el-dialog
+      title="分配角色"
+      :visible.sync="setRoleDialogVisible"
+      width="50%"
+      @close="setRoleDialogClosed"
+    >
+      <div>
+        <p>当前用户：{{ userInfo.username }}</p>
+        <p>当前角色：{{ userInfo.role_name }}</p>
+        <p>
+          分配角色：
+          <el-select
+            v-model="selectedRoleId"
+            filterable
+            allow-create
+            default-first-option
+            placeholder="请选择角色"
+          >
+            <el-option
+              v-for="item in rolesList"
+              :key="item.id"
+              :label="item.roleName"
+              :value="item.id"
+            ></el-option>
+          </el-select>
+        </p>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="setRoleDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="saveRoleInfo">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -162,10 +196,15 @@ export default {
         pagenum: 1,
         pagesize: 4,
       },
+      userInfo: {},
       userlist: [],
+      rolesList: [],
+      // 已选中的角色Id值
+      selectedRoleId: "",
       total: 0,
       addDialogVisible: false,
       editDialogVisible: false,
+      setRoleDialogVisible: false,
       addForm: {
         username: "",
         password: "",
@@ -321,7 +360,7 @@ export default {
     //根据ID删除对应用户信息
     removeUserById(id) {
       //console.log(id);
-      this.$confirm("此操作将永久删除用户, 是否继续?", "提示", {
+      this.$confirm("此操作将永久删除该用户, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
@@ -352,6 +391,44 @@ export default {
             message: "已取消删除!",
           });
         });
+    },
+    setRole(userinfo) {
+      this.userInfo = userinfo;
+      //展示对话框前获取所有角色列表
+      this.$axios({
+        method: "get",
+        url: "/roles",
+      })
+        .then((res) => {
+          console.log(res.data);
+          this.rolesList = res.data.data;
+          this.setRoleDialogVisible = true;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    saveRoleInfo() {
+      if (!this.selectedRoleId) {
+        return this.$message.error("请选择要分配的角色！");
+      }
+      this.$axios({
+        method: "put",
+        url: "/users/" + this.userInfo.id + "/role",
+        data: { rid: this.selectedRoleId },
+      })
+        .then((res) => {
+          console.log(res);
+          this.getUserList();
+          this.setRoleDialogVisible = false;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    setRoleDialogClosed() {
+      this.selectedRoleId = "";
+      this.userInfo = {};
     },
   },
 };
