@@ -126,9 +126,6 @@ export default {
   }
 }
 
-.el-main {
-}
-
 .toggle-button {
   background-color: #495065;
   text-align: center;
