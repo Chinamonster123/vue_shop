@@ -70,7 +70,7 @@
       <el-form
         :model="addCateForm"
         :rules="addCateFormRules"
-        ref="raddCateFormRef"
+        ref="addCateFormRef"
         label-width="100px"
       >
         <el-form-item label="分类名称" prop="cat_name">
@@ -218,7 +218,7 @@ export default {
       });
     },
     addCateDialogClosed() {
-      this.$refs.raddCateFormRef.resetFields();
+      this.$refs.addCateFormRef.resetFields();
       this.addCateForm.cat_pid = 0;
       this.addCateForm.cat_level = 0;
       this.selectedKeys = [];
