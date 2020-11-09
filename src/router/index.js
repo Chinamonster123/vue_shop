@@ -8,6 +8,8 @@ import Rights from '../components/power/Rights.vue'
 import Roles from '../components/power/Roles.vue'
 import Cate from '../components/goods/Cate.vue'
 import Params from '../components/goods/Params.vue'
+import List from '../components/goods/List.vue'
+import Add from '../components/goods/Add.vue'
 
 Vue.use(VueRouter)
 
@@ -46,9 +48,15 @@ const routes = [{
       },{
         path: '/params',
         component:Params
+      }, {
+        path: '/goods',
+        component: List,
+    },{
+      path: '/goods/add',
+      component: Add
     }],
     meta: {
-      title:'主页'
+      title:'电商后台管理系统'
     }
 }]
 
@@ -59,7 +67,7 @@ router.beforeEach((to, from, next) => {
   //to 将要访问的路由
   //from 从哪个路由进行跳转
   //next 是一个函数 next()表示放行   next(path) 强制跳转到该路由
-  //document.title=to.matched[0].meta.title
+  document.title=to.matched[0].meta.title
   if (to.path === '/login') return next();
   const tokenStr = window.sessionStorage.getItem('token')
   if (!tokenStr) return next('/login')
